@@ -1,30 +1,41 @@
 Class Testing.EmployeeRegistrationView Extends %RegisteredObject
 {
 
-ClassMethod GetEmployeeDataInput()
+Method GetEmployeeDataInput()
 {
+       
+        Set PromptList = $LISTBUILD("Enter employee number:", "Enter employee name (In Kanji):", "Enter employee name (In Katakana):", "Enter employee address:")
+        Set InputList = $LISTBUILD()
+        Set Index = 1
+        For {
+            Set Prompt = $LISTGET(PromptList, Index)
+            Write !, Prompt
+            Read !, Input
+            If Input = "/" {
+                Continue
+            } elseif Input = "//"{
+                Set Index = 1
+                Continue
+            }
+            Set $LIST(InputList, Index) = Input 
+            Set Index = Index + 1
+            QUIT:Index>$LISTLENGTH(PromptList)
+        }
+        Write !, InputList
 
-        Read !, "Enter employee number:", !, EmployeeNumber
-        Read !, "Enter employee name (In Kanji):", !, EmployeeNameKanji
-        Read !, "Enter employee name (In Katakana):", !, EmployeeNameKana
-        Read !, "Enter employee address", !, EmployeeAddress
 
         Set EmployeeDTO = ##class(Testing.Employee).%New()
-        Set EmployeeDTO.EmployeeNumber = EmployeeNumber
-        Set EmployeeDTO.EmployeeNameKanji = EmployeeNameKanji
-        Set EmployeeDTO.EmployeeNameKana = EmployeeNameKana
-        Set EmployeeDTO.EmployeeAddress = EmployeeAddress
-
+        Do EmployeeDTO.ConvertListToProperties(InputList)
         Return EmployeeDTO
 }
 
-ClassMethod GetOperationInput()
+Method GetOperationInput()
 {
     Read !, "Enter @ to insert, DEL to delete:", OperationFlag
     Return OperationFlag
 }
 
-ClassMethod GetContinueInput()
+Method GetContinueInput()
 {
     Read !, "Enter * to continue:", ContinueFlag
     Return ContinueFlag

@@ -6,13 +6,28 @@ Method SaveEmployee(InputEmployee As Employee) As %Status
 {
     Set EmpDao = ##class(Testing.EmployeeDAO).%New()
     Set isExistingEmployee = $This.CheckExistingEmployee(InputEmployee)
+    //Write !, InputEmployee.EmployeeNumber
     Write !, isExistingEmployee
     if (isExistingEmployee = -1){
-        Do EmpDao.SaveEmployee(InputEmployee.ConvertToDataList())
+        Do EmpDao.SaveEmployee(InputEmployee)
         Write !, $LISTGET(^EmployeeList, $LISTLENGTH(^EmployeeList))
+        Write !, "Total employees:", $LISTLENGTH(^EmployeeList)
     } else {
         Write $This.GetEmployee(isExistingEmployee)
     }
+}
+
+Method DeleteEmployee(InputEmployee As Employee) As %Status
+{
+    Set EmpDao = ##class(Testing.EmployeeDAO).%New()
+    Set isExistingEmployee = $This.CheckExistingEmployee(InputEmployee)
+    Write !, isExistingEmployee
+    if (isExistingEmployee ! -1){
+        Set EmpDao = ##class(Testing.EmployeeDAO).%New()
+        Do EmpDao.DeleteEmployeeByIndex(isExistingEmployee)
+    }
+
+    Write !, "Total number of employees", $LISTLENGTH(^EmployeeList)
 }
 
 /// Description
@@ -29,7 +44,6 @@ Method ValidateEmployeeData(InputEmployee As Employee) As %Status
 /// $LISTFIND() would not work in this situation.
 Method CheckExistingEmployee(InputEmployee As Employee) As %Status
 {
-   
     Set EmployeeCount = $LISTLENGTH(^EmployeeList) 
     Try{
         Write !, "List lenght:", EmployeeCount
