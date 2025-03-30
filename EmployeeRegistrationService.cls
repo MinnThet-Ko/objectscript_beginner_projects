@@ -6,12 +6,9 @@ Method SaveEmployee(InputEmployee As Employee) As %Status
 {
     Set EmpDao = ##class(Testing.EmployeeDAO).%New()
     Set isExistingEmployee = $This.CheckExistingEmployee(InputEmployee)
-    //Write !, InputEmployee.EmployeeNumber
-    Write !, isExistingEmployee
     if (isExistingEmployee = -1){
         Do EmpDao.SaveEmployee(InputEmployee)
         Write !, $LISTGET(^EmployeeList, $LISTLENGTH(^EmployeeList))
-        Write !, "Total employees:", $LISTLENGTH(^EmployeeList)
     } else {
         Write $This.GetEmployee(isExistingEmployee)
     }
@@ -21,13 +18,10 @@ Method DeleteEmployee(InputEmployee As Employee) As %Status
 {
     Set EmpDao = ##class(Testing.EmployeeDAO).%New()
     Set isExistingEmployee = $This.CheckExistingEmployee(InputEmployee)
-    Write !, isExistingEmployee
     if (isExistingEmployee ! -1){
         Set EmpDao = ##class(Testing.EmployeeDAO).%New()
         Do EmpDao.DeleteEmployeeByIndex(isExistingEmployee)
     }
-
-    Write !, "Total number of employees", $LISTLENGTH(^EmployeeList)
 }
 
 /// Description
@@ -46,15 +40,10 @@ Method CheckExistingEmployee(InputEmployee As Employee) As %Status
 {
     Set EmployeeCount = $LISTLENGTH(^EmployeeList) 
     Try{
-        Write !, "List lenght:", EmployeeCount
         if EmployeeCount > 1 {
-            
             Set index = 2
             For {
-                Write !, "In the loop", index
-                
                 Set EmpPropList = $LISTGET(^EmployeeList, index)
-                Write $LISTGET(EmpPropList, 1)
                 If $LISTGET(EmpPropList, 1) = InputEmployee.EmployeeNumber{
                     Return index
                 }
@@ -72,7 +61,6 @@ Method CheckExistingEmployee(InputEmployee As Employee) As %Status
         
         Return -1
     } Catch ErrorObj {
-        Write !, "In the Exception"
         if (ErrorObj.Name = "<NULL VALUE>"){
             Return -1
         }

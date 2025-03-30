@@ -3,8 +3,8 @@ Class Testing.EmployeeRegistrationView Extends %RegisteredObject
 
 Method GetEmployeeDataInput()
 {
-       
-        Set PromptList = $LISTBUILD("Enter employee number:", "Enter employee name (In Kanji):", "Enter employee name (In Katakana):", "Enter employee address:")
+        Write !, "***社員登録PG***"
+        Set PromptList = $LISTBUILD("社員番号＝", "氏名漢字＝", "氏名カナ＝", "住所＝")
         Set InputList = $LISTBUILD()
         Set Index = 1
         For {
@@ -31,13 +31,13 @@ Method GetEmployeeDataInput()
 
 Method GetOperationInput()
 {
-    Read !, "Enter @ to insert, DEL to delete:", OperationFlag
+    Read !, "@:登録、DEL:削除", OperationFlag
     Return OperationFlag
 }
 
 Method GetContinueInput()
 {
-    Read !, "Enter * to continue:", ContinueFlag
+    Read !, "$:終了行番号", ContinueFlag
     Return ContinueFlag
 }
 
