@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "ObjectScript_Test_Project - iris_mtk:%SYS",
+			"uri": "isfs://iris_mtk:%sys/?project=ObjectScript_Test_Project"
+		},
+		{
+			"name": "iris_mtk:%SYS",
+			"uri": "isfs://iris_mtk:%sys/"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "InterSystems Default Dark Modern"
+	}
+}
