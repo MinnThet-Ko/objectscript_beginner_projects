@@ -40,11 +40,10 @@ Method CheckExistingEmployee(InputEmployee As Employee) As %Status
 {
     Set EmployeeCount = $LISTLENGTH(^EmployeeList) 
     Try{
-        if EmployeeCount > 1 {
-            Set index = 2
+            Set index = 1
             For {
                 Set EmpPropList = $LISTGET(^EmployeeList, index)
-                If $LISTGET(EmpPropList, 1) = InputEmployee.EmployeeNumber{
+                If ($LISTGET(EmpPropList, 1) = InputEmployee.EmployeeNumber) {
                     Return index
                 }
                 
@@ -57,7 +56,7 @@ Method CheckExistingEmployee(InputEmployee As Employee) As %Status
                 Write $LISTGET(^EmployeeList, 1)
             }
             */
-        }
+        
         
         Return -1
     } Catch ErrorObj {
@@ -76,6 +75,22 @@ Method GetEmployee(EmployeeIndex As %Numeric) As %Status
 {
     Set EmpDao = ##class(Testing.EmployeeDAO).%New()
     Return EmpDao.GetEmployeeByIndex(EmployeeIndex)
+}
+
+Method ValidateUserInput(%Employee As Testing.Employee)
+{
+   //&& %Employee.EmployeeNameKana?.A && %Employee.EmployeeAddress?.A
+   //%Employee.EmployeeNameKanji?.A &&
+   //elseif (%Employee.EmployeeNameKana?.A = 1) {
+   //     return -1
+    //}
+    if (%Employee.EmployeeNameKanji?.A  = 1) {
+        return -1
+    }  elseif (%Employee.EmployeeAddress?.A = 1) {
+        return -1
+    } else {
+        return 0
+    }
 }
 
 }
