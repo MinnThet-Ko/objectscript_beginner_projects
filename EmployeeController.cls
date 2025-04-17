@@ -5,6 +5,14 @@ Class Testing.EmployeeController Extends %RegisteredObject
 
 // Property EmpRegService As EmployeeRegistrationService [ InitialExpression = {##class(EmployeeRegistrationService).%New()} ];
 
+Property EmployeeDTO As Testing.Employee;
+
+Property OperationFlag As %String;
+
+Property ContinueFlag As %String;
+
+Property CursorPostion As %Integer;
+
 /// Description
 Method HandleEmployeeRegistration() As %Status
 {
@@ -12,15 +20,23 @@ Method HandleEmployeeRegistration() As %Status
     Set EmpRegView = ##class(Testing.EmployeeRegistrationView).%New()
     Set EmpRegService = ##class(Testing.EmployeeRegistrationService).%New()
     Do {
-        Set EmpDto = EmpRegView.GetEmployeeDataInput()
-        Set OpFlag = EmpRegView.GetOperationInput()
-        if (OpFlag = "@") {
-            Do EmpRegService.SaveEmployee(EmpDto)
-        } elseif (OpFlag = "DEL"){
-            Do EmpRegService.DeleteEmployee(EmpDto)
+        Do EmpRegView.GetEmployeeDataInput()
+        Do EmpRegView.GetOperationInput()
+        if (EmpRegView.OperationFlag = "@") {
+            Do EmpRegService.SaveEmployee(EmpRegView.EmployeeDTO)
+        } elseif (EmpRegView.OperationFlag = "DEL"){
+            Do EmpRegService.DeleteEmployee(EmpRegView.EmployeeDTO)
         }
-        Set ConFlag = EmpRegView.GetContinueInput()
-    } While '(ConFlag = "$")
+        Do EmpRegView.GetContinueInput()
+    } While '(EmpRegView.ContinueFlag = "$")
+}
+
+Method HandleSearchEmployee(%EmployeeId As %Integer) As %Status
+{
+    Set EmpDto = ##Class(Testing.Employee).%New()
+    Set EmpDto.EmployeeNumber =  %EmployeeId
+    Set EmpRegService = ##class(Testing.EmployeeRegistrationService).%New()
+    return EmpRegService.CheckExistingEmployee(EmpDto)
 }
 
 }
