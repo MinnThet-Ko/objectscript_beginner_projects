@@ -1,6 +1,10 @@
 Class Testing.EmployeeRegistrationView Extends %RegisteredObject
 {
 
+Property EmployeeDTO as %Testing.Employee;
+Property OperationFlag as %String;
+Property ContinueFlag as %String;
+
 Method GetEmployeeDataInput()
 {
         Write !, "***社員登録PG***"
@@ -24,21 +28,21 @@ Method GetEmployeeDataInput()
         Write !, InputList
 
 
-        Set EmployeeDTO = ##class(Testing.Employee).%New()
-        Do EmployeeDTO.ConvertListToProperties(InputList)
-        Return EmployeeDTO
+        Set $THIS.EmployeeDTO = ##class(Testing.Employee).%New()
+        Do $THIS.EmployeeDTO.ConvertListToProperties(InputList)
+
 }
 
 Method GetOperationInput()
 {
-    Read !, "@:登録、DEL:削除", OperationFlag
-    Return OperationFlag
+    Read !, "@:登録、DEL:削除", Input
+    Return $THIS.OperationFlag = Input
 }
 
 Method GetContinueInput()
 {
-    Read !, "$:終了行番号", ContinueFlag
-    Return ContinueFlag
+    Read !, "$:終了行番号", Input
+    Set $THIS.ContinueFlag = Input
 }
 
 }
