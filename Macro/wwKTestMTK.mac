@@ -1,0 +1,4 @@
+ROUTINE wwKTestMTK
+
+    w "Hello world"
+    w $$$MKEN1MTK

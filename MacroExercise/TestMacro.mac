@@ -1,0 +1,52 @@
+ROUTINE TestMacro
+#Define PropertyList $LISTBUILD("Name", "CreatedDate", "UpdatedDate")
+
+    do CheckGlobalVariable
+    do SaveEmployee
+    do QueryEmployee("Name", "[", "B")
+    q
+
+
+CheckGlobalVariable
+    i ('$DATA(^$GLOBAL("^EmployeeTree"))) {
+        s ^EmployeeTree = ""
+    } 
+    q
+
+
+SaveEmployee
+    s ^EmployeeTree(1000, "Name") = "Trixie Mattle"
+    s ^EmployeeTree(1000, "CreatedDate") = $ZDATE($HOROLOG)
+    s ^EmployeeTree(1000, "UpdatedDate") = $ZDATE($HOROLOG)
+
+    s ^EmployeeTree(1001, "Name") = "Katya"
+    s ^EmployeeTree(1001, "CreatedDate") = $ZDATE($HOROLOG)
+    s ^EmployeeTree(1001, "UpdatedDate") = $ZDATE($HOROLOG)
+
+    s ^EmployeeTree(1002, "Name") = "Lydia B. Collins"
+    s ^EmployeeTree(1002, "CreatedDate") = $ZDATE($HOROLOG)
+    s ^EmployeeTree(1002, "UpdatedDate") = $ZDATE($HOROLOG)
+    q
+
+DisplayEmployee(%EmployeeID)
+    set listLength = $ListLENGTH($$$PropertyList)
+    w listLength
+    f i =1:1:listLength {
+
+        w ^EmployeeTree(%EmployeeID, $LISTGET($$$PropertyList, i))
+    }
+    q
+
+QueryEmployee(%Field, %Criteria, %CriteriaValue)
+    Set key = $Order(^EmployeeTree(""))
+    While (key '= "") {
+        // Write out contents
+        w $g(^EmployeeTree(key,%Field))[%CriteriaValue
+        // Find next node
+        Set key = $Order(^EmployeeTree(key))
+        
+    }
+    q
+
+
+
