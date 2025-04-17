@@ -1,9 +1,11 @@
 Class Testing.EmployeeRegistrationView Extends %RegisteredObject
 {
 
-Property EmployeeDTO as %Testing.Employee;
-Property OperationFlag as %String;
-Property ContinueFlag as %String;
+Property EmployeeDTO As Testing.Employee;
+
+Property OperationFlag As %String;
+
+Property ContinueFlag As %String;
 
 Method GetEmployeeDataInput()
 {
@@ -30,7 +32,6 @@ Method GetEmployeeDataInput()
 
         Set $THIS.EmployeeDTO = ##class(Testing.Employee).%New()
         Do $THIS.EmployeeDTO.ConvertListToProperties(InputList)
-
 }
 
 Method GetOperationInput()

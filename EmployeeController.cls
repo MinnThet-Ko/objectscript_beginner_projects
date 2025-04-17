@@ -12,8 +12,8 @@ Method HandleEmployeeRegistration() As %Status
     Set EmpRegView = ##class(Testing.EmployeeRegistrationView).%New()
     Set EmpRegService = ##class(Testing.EmployeeRegistrationService).%New()
     Do {
-        Set EmpDto = EmpRegView.GetEmployeeDataInput()
-        Set OpFlag = EmpRegView.GetOperationInput()
+        Do EmpRegView.GetEmployeeDataInput()
+        Do EmpRegView.GetOperationInput()
         if (OpFlag = "@") {
             Do EmpRegService.SaveEmployee(EmpDto)
         } elseif (OpFlag = "DEL"){
