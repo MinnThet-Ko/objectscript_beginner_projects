@@ -30,7 +30,6 @@ Method HandleEmployeeRegistration() As %Status
         }
 
         if (EmpRegView.OperationFlag = "@") {
-            w !, EmpRegService.ValidateUserInput($THIS.EmployeeDTO)
             if (EmpRegService.ValidateUserInput($THIS.EmployeeDTO) = 0) {
                 Do EmpRegService.SaveEmployee($THIS.EmployeeDTO)
                 W !, "登録成功です。"
@@ -50,6 +49,7 @@ Method HandleMenuDisplay()
 {
         Set EmpRegView = ##class(Testing.EmployeeRegistrationView).%New()
         Set EmpRegService = ##class(Testing.EmployeeRegistrationService).%New()
+        Set Util = ##class(Testing.Util).%New()
         Write !, "***社員登録PG***"
         Set PromptList = $LISTBUILD("社員番号＝", "氏名漢字＝", "氏名カナ＝", "住所＝")
         Set InputList = $LISTBUILD()
@@ -61,10 +61,10 @@ Method HandleMenuDisplay()
             //Handling existing user
             Set isExistingEmployee = $THIS.HandleSearchEmployee(EmpRegView.Input)
             if (Index = 1 && '(isExistingEmployee = -1)) {
-                W !, "isExistingEmployee "
                 Set $THIS.EmployeeDTO = ##class(Testing.Employee).%New()
                 Do $THIS.EmployeeDTO.ConvertListToProperties(EmpRegService.GetEmployee(isExistingEmployee))
-                Write !, EmpRegService.GetEmployee(isExistingEmployee)
+                Write !, $CHAR(EmpRegService.GetEmployee(isExistingEmployee))
+                Do Util.DisplayList(EmpRegService.GetEmployee(isExistingEmployee))
                 Return
             }
 
@@ -79,7 +79,7 @@ Method HandleMenuDisplay()
             Set Index = Index + 1
             QUIT:Index>$LISTLENGTH(PromptList)
         }
-        Write !, InputList
+        Do Util.DisplayList(EmpRegService.GetEmployee(InputList))
 
 
         Set $THIS.EmployeeDTO = ##class(Testing.Employee).%New()

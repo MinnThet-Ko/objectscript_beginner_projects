@@ -1,7 +1,7 @@
 Class Testing.EmployeeRegistrationMain Extends %RegisteredObject
 {
 
-/// Description
+/// This is the entry point of the program.
 ClassMethod Main() As %Status
 {
         if $DATA(^EmployeeList) = 0 {

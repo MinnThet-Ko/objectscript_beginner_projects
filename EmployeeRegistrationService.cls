@@ -86,11 +86,16 @@ Method ValidateUserInput(%Employee As Testing.Employee)
     //}
     if (%Employee.EmployeeNameKanji?.A  = 1) {
         return -1
-    }  elseif (%Employee.EmployeeAddress?.A = 1) {
+    }  
+    
+    if (%Employee.EmployeeNameKana?.A = 1) {
         return -1
-    } else {
-        return 0
+    }  
+    if (%Employee.EmployeeAddress?.A = 1) {
+        return -1
     }
+    
+    return 0
 }
 
 }
