@@ -1,4 +1,29 @@
 ROUTINE wwKTestMTK
 
-    w "Hello world"
-    w $$$MKEN1MTK
+#Include Testing.Macro.WorkMasterDAO
+#Include Testing.Macro.PermissionMasterDAO
+
+    if '$DATA(^MKEN1MTK) {
+        Set ^MKEN1MTK = ""
+    }
+
+    // Q1. Get all records in permission master global variable
+    Set TotalRecord = $LENGTH(^MKEN1MTK)
+    Write TotalRecord
+
+    // Q2. Display data for ABCNS0151
+    Do DisplayPermissionMasterRecord("ABCNS0151")
+
+    // Q3. Display every record which has D as the first letter
+    Set resultList = FindStartWith("", "D" )
+    for i =1:1:$LISTLENGTH(resultList) {
+        Do DisplayPermissionMasterRecord($LISTGET($LISTGET(resultList,i),1))
+    }
+
+    // Q3. Display every record which has D as the first letter
+    Set resultList = FindContain("", "w" )
+    for i =1:1:$LISTLENGTH(resultList) {
+        Do DeletePermissionMasterRecord($LISTGET($LISTGET(resultList,i),1))
+    }
+    q
+

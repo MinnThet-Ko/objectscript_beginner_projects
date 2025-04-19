@@ -1,9 +1,13 @@
 ROUTINE TestMacro
+
+#Include TestInclude
 #Define PropertyList $LISTBUILD("Name", "CreatedDate", "UpdatedDate")
 
+    
     do CheckGlobalVariable
     do SaveEmployee
     do QueryEmployee("Name", "[", "B")
+    do SayHelloWorld()
     q
 
 
@@ -41,7 +45,12 @@ QueryEmployee(%Field, %Criteria, %CriteriaValue)
     Set key = $Order(^EmployeeTree(""))
     While (key '= "") {
         // Write out contents
-        w $g(^EmployeeTree(key,%Field))[%CriteriaValue
+        
+        if ($g(^EmployeeTree(key,%Field))[%CriteriaValue = 1) {
+            w !, $g(^EmployeeTree(key,"Name"))
+            w !, $g(^EmployeeTree(key,"CreatedDate"))
+            w !, $g(^EmployeeTree(key,"UpdatedDate"))
+        }
         // Find next node
         Set key = $Order(^EmployeeTree(key))
         

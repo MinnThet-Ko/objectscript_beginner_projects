@@ -29,6 +29,8 @@ Method HandleEmployeeRegistration() As %Status
             QUIT
         }
 
+
+
         if (EmpRegView.OperationFlag = "@") {
             if (EmpRegService.ValidateUserInput($THIS.EmployeeDTO) = 0) {
                 Do EmpRegService.SaveEmployee($THIS.EmployeeDTO)
@@ -37,7 +39,9 @@ Method HandleEmployeeRegistration() As %Status
                 W !, "英数字禁止。"
             }
             
-        } elseif (EmpRegView.OperationFlag = "DEL"){
+        }
+
+        if (EmpRegView.OperationFlag = "DEL"){
             Do EmpRegService.DeleteEmployee($THIS.EmployeeDTO)
             W !, "削除成功です。"
         }
@@ -70,10 +74,11 @@ Method HandleMenuDisplay()
 
             //Handling backward inputs for now (I have no idea how to manipulate the cursor.)
             If EmpRegView.Input = "/" {
-                Continue
+                Set Index = Index-2
+                Write $Char(27)_"[2A"
             } elseif EmpRegView.Input = "//"{
+                Write $Char(27)_"[6A"
                 Set Index = 1
-                Continue
             }
             Set $LIST(InputList, Index) = $ZSTRIP(EmpRegView.Input, "<>W") 
             Set Index = Index + 1

@@ -24,4 +24,11 @@ Method GetOperationInput()
     Set $THIS.OperationFlag = Input
 }
 
+Method GetUpdateInput(%Prompt As %String, %Input As %String)
+{
+    Write !,%Prompt
+    Read %Input
+    Set $THIS.Input = %Input
+}
+
 }
