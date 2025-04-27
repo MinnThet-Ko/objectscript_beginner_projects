@@ -1,13 +1,10 @@
 ROUTINE TestMacro
-
 #Include TestInclude
 #Define PropertyList $LISTBUILD("Name", "CreatedDate", "UpdatedDate")
-
-    
     do CheckGlobalVariable
     do SaveEmployee
     do QueryEmployee("Name", "[", "B")
-    do SayHelloWorld()
+    $$$SayHelloWorld
     q
 
 
@@ -56,6 +53,8 @@ QueryEmployee(%Field, %Criteria, %CriteriaValue)
         
     }
     q
+
+
 
 
 

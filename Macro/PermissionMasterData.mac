@@ -1,0 +1,41 @@
+ROUTINE Testing.Macro.PermissionMasterData
+
+    set ^MKEN1MTK("ABCNS0151") = "ABCNS0151"
+    set ^MKEN1MTK("ABCNS0151", "管理グループ") = "GROUP001"
+    set ^MKEN1MTK("ABCNS0151", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("ABCNS0151", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN1MTK("DEFNS0151") = "DEFNS0151"
+    set ^MKEN1MTK("DEFNS0151", "管理グループ") = "GROUP001"
+    set ^MKEN1MTK("DEFNS0151", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("DEFNS0151", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN1MTK("DEFNS0152") = "DEFNS0152"
+    set ^MKEN1MTK("DEFNS0152", "管理グループ") = "GROUP002"
+    set ^MKEN1MTK("DEFNS0152", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("DEFNS0152", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN1MTK("ABCNS0152") = "ABCNS0152"
+    set ^MKEN1MTK("ABCNS0152", "管理グループ") = "GROUP002"
+    set ^MKEN1MTK("ABCNS0152", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("ABCNS0152", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN1MTK("wXYNS0152") = "WXYNS0152"
+    set ^MKEN1MTK("wXYNS0152", "管理グループ") = "GROUP003"
+    set ^MKEN1MTK("wXYNS0152", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("wXYNS0152", "登録日") = $ZDATE($HOROLOG)
+    
+    set ^MKEN1MTK("wXYNS0153") = "WXYNS0153"
+    set ^MKEN1MTK("wXYNS0153", "管理グループ") = "GROUP003"
+    set ^MKEN1MTK("wXYNS0153", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("wXYNS0153", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN1MTK("KEIW0011") = "KEIW0011"
+    set ^MKEN1MTK("KEIW0011", "管理グループ") = "GROUP003"
+    set ^MKEN1MTK("KEIW0011", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("KEIW0011", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN1MTK("KEIW0012") = "KEIW0012"
+    set ^MKEN1MTK("KEIW0012", "管理グループ") = "GROUP004"
+    set ^MKEN1MTK("KEIW0012", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN1MTK("KEIW0012", "登録日") = $ZDATE($HOROLOG)

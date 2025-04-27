@@ -1,0 +1,122 @@
+ROUTINE Testing.Macro.OriginalMacro
+TestingMacroOriginalMacro ;
+
+    // Q1. Get all records in permission master global variable
+    Set TotalRecord = $LENGTH(^MKEN1MTK)
+    Write !, TotalRecord
+
+    // Q2. Display data for ABCNS0151
+    Do DisplayPermissionMasterRecord("ABCNS0151")
+
+    // Q3. Display every record which has D as the first letter
+    // Q4. Deleting every record which has w as the first letter
+    Set key = $Order(^MKEN1MTK(""))
+    Set Index = 1
+    While (key '= "") {
+
+        D:$EXTRACT(key)="D" DisplayPermissionMasterRecord(key)
+        
+        D:$EXTRACT(key)="w" DeletePermissionMasterRecord(key)
+        // Find next node
+        Set key = $Order(^MKEN1MTK(key))
+        
+    }
+
+    // Q5. Display the group name of KEIW0011
+    Set key = $Order(^MDIC(""))
+    Set Index = 1
+    While (key '= "") {
+        if ($g(^MDIC(key, "グループコード")) = $G(^MKEN1MTK("KEIW0011", "管理グループ"))) {
+            w !, $g(^MDIC(key, "グループ名"))
+        }
+        // Find next node
+        Set key = $Order(^MDIC(key))
+        
+    }
+
+    // Q6. Display date format
+    do FormatDate($GET(^MKEN1MTK("ABCNS0151", "更新日")))
+    do FormatDate($GET(^MKEN1MTK("ABCNS0151", "登録日")))
+
+    // Q7. Update group name
+    do UpdateGroupName("ABCNS0151", $GET(^MKEN1MTK("ABCNS0151", "管理グループ"))_"A")
+
+    // Q8. Delete if the command code does not exits
+    Set key = $Order(^MDIC(""))
+    Set Index = 1
+    While (key '= "") {
+        Set isFound  = 0
+        if '($g(^MDIC(key, "グループコード")) = $GET(^MKEN1MTK("KEIW0012", "管理グループ"))) {
+            set isFound = 1
+        }
+
+        if (isFound = 1){
+            Do DeletePermissionMasterRecord("KEIW0012") 
+        }
+        // Find next node
+        Set key = $Order(^MDIC(key))
+        
+    }
+
+    // Q9. Display all employee in the selected group
+    Set key = $Order(^MKEN1MTK(""))
+    Set Index = 1
+    While (key '= "") {
+
+        if ($g(^MKEN1MTK(key, "管理グループ")) = "GROUP001") {
+            DO DisplayPermissionMasterRecord(key)
+        }
+        // Find next node
+        Set key = $Order(^MKEN1MTK(key))
+        
+    }
+
+    // Q10. Store new group codes in employee master
+    set GroupPrefix = $LISTBUILD("Q", "R", "S", "T", "U", "W")
+    set inputID = "KEIW0011"
+    for i=1:1:$LISTLENGTH(GroupPrefix){
+        Write !, $LISTGET(GroupPrefix, i)
+        do SaveNewGroupCode(inputID, $LISTGET(GroupPrefix, i))
+    }
+    
+
+    // Q11. Count every employee and group records by that is related to every routine in permission managment
+    Set PermissionMasterKey = $ORDER(^MKEN1MTK(""))
+    Set outerIndex = 1
+    While (PermissionMasterKey '= ""){
+        w !, PermissionMasterKey
+
+        Set EmployeeMasterKey =  $ORDER(^MKEN2MTK(PermissionMasterKey))
+        While (EmployeeMasterKey '= ""){
+            Write !, EmployeeMasterKey 
+            Set EmployeeMasterKey =  $ORDER(^MKEN2MTK(EmployeeMasterKey))
+        }
+
+        set PermissionMasterKey = $ORDER(^MKEN1MTK(PermissionMasterKey))
+    }
+    Q
+
+DisplayPermissionMasterRecord(%PermissionID)
+    w !, ^MKEN1MTK(%PermissionID, "管理グループ")_":"_^MKEN1MTK(%PermissionID, "更新日")_":"_^MKEN1MTK(%PermissionID, "登録日")
+    Quit
+
+DeletePermissionMasterRecord(%PermissionID)
+    Kill ^MKEN1MTK(%PermissionID, "管理グループ")
+    Kill ^MKEN1MTK(%PermissionID, "更新日")
+    Kill ^MKEN1MTK(%PermissionID, "登録日")
+    Kill ^MKEN1MTK(%PermissionID)
+    q
+
+FormatDate(%DateString)
+    set ConvertedDate = $ZDATE($ZDATEH(%DateString),4)
+    w !, $EXTRACT(ConvertedDate, 7, *)_"年"_$EXTRACT(ConvertedDate, 4,5)_"月"_$EXTRACT(ConvertedDate, 1,2)_"日"
+    Q
+
+UpdateGroupName(%PermissionID, %NewGroupName)
+    set ^MKEN1MTK(%PermissionID, "管理グループ") = %NewGroupName
+    Q
+
+SaveNewGroupCode(%PermissionID, %GroupCode)
+    set ^MKEN2MTK(%PermissionID, "GRP", %GroupCode, "登録日" ) = $ZDATE($HOROLOG)
+    w ^MKEN2MTK(%PermissionID, "GRP", %GroupCode, "登録日" )
+    Q

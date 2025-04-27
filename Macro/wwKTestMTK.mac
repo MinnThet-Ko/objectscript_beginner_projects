@@ -1,29 +1,81 @@
 ROUTINE wwKTestMTK
 
-#Include Testing.Macro.WorkMasterDAO
-#Include Testing.Macro.PermissionMasterDAO
+    // Q1. Find the number of records in 権限マスター
+    // Read about why the variable name is used instead of the real variable.
+    // Reference: https://docs.intersystems.com/irislatest/csp/docbook/DocBook.UI.Page.cls?KEY=RCOS_fquery
+    s queryary = "^MKEN1MTK"
+    s recordCount = 0
+    While 1 { 
+        Set queryary=$QUERY(@queryary)
+        s recordCount = recordCount + 1 
+        Quit:queryary="" 
+    }
+    Write !!, recordCount
 
-    if '$DATA(^MKEN1MTK) {
-        Set ^MKEN1MTK = ""
+    // Q2. Display the data of ABCNS0151 separated by semicolon.
+    w !, $REPLACE($GET(^MKEN1MTK("ABCNS0151")), $C(22), ";")
+
+    // Q3. Display everyone who has "D" as the first character in the routine ID.
+    s queryary = "^MKEN1MTK"
+    s recordCount = 0
+    While 1 { 
+        s queryary=$QUERY(@queryary)
+        w:$EXTRACT(queryary, 12)="D" !, @queryary
+        Quit:queryary="" 
     }
 
-    // Q1. Get all records in permission master global variable
-    Set TotalRecord = $LENGTH(^MKEN1MTK)
-    Write TotalRecord
-
-    // Q2. Display data for ABCNS0151
-    Do DisplayPermissionMasterRecord("ABCNS0151")
-
-    // Q3. Display every record which has D as the first letter
-    Set resultList = FindStartWith("", "D" )
-    for i =1:1:$LISTLENGTH(resultList) {
-        Do DisplayPermissionMasterRecord($LISTGET($LISTGET(resultList,i),1))
+    // Q4. Delete everyone who has "w" as the first character in the routine ID.
+    s queryary = "^MKEN1MTK"
+    While 1 { 
+        s queryary=$QUERY(@queryary)
+        K:$EXTRACT(queryary, 12)="w" ^MKEN1MTK($EXTRACT(queryary,12, *-2))
+        Quit:queryary="" 
     }
 
-    // Q3. Display every record which has D as the first letter
-    Set resultList = FindContain("", "w" )
-    for i =1:1:$LISTLENGTH(resultList) {
-        Do DeletePermissionMasterRecord($LISTGET($LISTGET(resultList,i),1))
+    // Q5. Display the group name of KEIW0011
+    set groupIDString = $PIECE($GET(^MKEN1MTK("KEIW0011")), $C(22), 1)
+    set groupIDString = $REPLACE(groupIDString, "/", "")
+    for i=1:1:$LENGTH(groupIDString){
+        s groupName = $LIST($GET(^MDIC("職務グループ", $EXTRACT(groupIDString, i))))
+        w !, groupName
     }
-    q
+
+    // Q6. Display the saved date and updated date
+    set updatedDateString = $PIECE($GET(^MKEN1MTK("swAHS")), $C(22), 2)
+    set savedDateString = $PIECE($GET(^MKEN1MTK("swAHS")), $C(22), 3)
+    w !, $EXTRACT(updatedDateString, 1, 4)_"年"_$EXTRACT(updatedDateString, 5, 6)_"月"_$EXTRACT(updatedDateString, 7, 8)_"日"
+    w !, $EXTRACT(savedDateString, 1, 4)_"年"_$EXTRACT(savedDateString, 5, 6)_"月"_$EXTRACT(savedDateString, 7, 8)_"日"
+
+    // Q7. Added a new group name
+    s oldID = $PIECE($GET(^MKEN1MTK("INQWMS0030")), $C(22), 1)
+    s oldDate = $PIECE($GET(^MKEN1MTK("INQWMS0030")), $C(22), 2)
+    s newID = oldID_"/A"
+    //s ^MKEN1MTK("INQWMS0030") = $REPLACE($GET(^MKEN1MTK("INQWMS0030")), oldID, newID)
+
+    S updatedDate = $ZDATE($HOROLOG)
+    S updatedDateString = $PIECE(updatedDate, "/", 3)_$PIECE(updatedDate, "/", 1)_$PIECE(updatedDate, "/", 2)
+    s ^MKEN1MTK("INQWMS0030") = $REPLACE($GET(^MKEN1MTK("INQWMS0030")), oldDate, updatedDateString)
+
+    // Q8. Delete routines that are not in group master
+    set groupIDString = $PIECE($GET(^MKEN1MTK("MSTMZATUSHO")), $C(22), 1)
+    set groupIDString = $REPLACE(groupIDString, "/", "")
+    for i=1:1:$LENGTH(groupIDString){
+        K:$DATA(^MDIC("職務グループ", $EXTRACT(groupIDString, i)))=0 ^MKEN1MTK("MSTMZATUSHO")
+    }
+
+    // Q9. Display every one who has a particular group name
+    s groupID = "A"
+    s queryary = "^MKEN1MTK"
+    While 1 { 
+        s queryary=$QUERY(@queryary)
+        s dataString = @queryary
+        set groupIDString = $PIECE(dataString, $C(22), 1)
+        set groupIDString = $REPLACE(groupIDString, "/", "")
+        for i=1:1:$LENGTH(groupIDString){
+            W:$EXTRACT(groupIDString, i)=groupID !, @queryary
+        }
+        Quit:queryary="" 
+    }
+
+
 

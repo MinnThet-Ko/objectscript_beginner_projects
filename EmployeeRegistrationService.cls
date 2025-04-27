@@ -90,7 +90,7 @@ Method ValidateUserInput(%Employee As Testing.Employee)
     }  
     
     if (%Employee.EmployeeNameKana?.A = 1) {
-        W "IN NAME KANA"
+        W "IN NAME KANA", %Employee.EmployeeNameKana
         return -1
     }  
     if (%Employee.EmployeeAddress?.A = 1) {

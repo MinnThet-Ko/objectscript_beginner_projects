@@ -1,0 +1,11 @@
+ROUTINE Testing.Macro.GroupMasterData
+
+    set ^MDIC = ""
+    set ^MDIC("開発", "グループコード") = "GROUP001"
+    set ^MDIC("開発", "グループ名") = "Backend"
+
+    set ^MDIC("開発", "グループコード") = "GROUP002"
+    set ^MDIC("開発", "グループ名") = "Frontend"
+
+    set ^MDIC("開発", "グループコード") = "GROUP003"
+    set ^MDIC("開発", "グループ名") = "Database"

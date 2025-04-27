@@ -1,0 +1,18 @@
+ROUTINE Testing.Macro.EmployeeMacro
+TestingMacroEmployeeMacro ;
+
+    set ^MKEN2MTK("ABCNS0151", "ルチン名") = "ABCNS0151"
+    set ^MKEN2MTK("ABCNS0151", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN2MTK("ABCNS0151", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN2MTK("ABCNS0151", "SYA", "社員コード", "登録日" ) = $ZDATE($HOROLOG)
+
+    set ^MKEN2MTK("ABCNS0151", "GRP", "グループコード", "登録日" ) = $ZDATE($HOROLOG)
+
+    set ^MKEN2MTK("KEIW0011", "ルチン名") = "KEIW0011"
+    set ^MKEN2MTK("KEIW0011", "更新日") = $ZDATE($HOROLOG)
+    set ^MKEN2MTK("KEIW0011", "登録日") = $ZDATE($HOROLOG)
+
+    set ^MKEN2MTK("KEIW0011", "SYA", "", "登録日" ) = ""
+
+    set ^MKEN2MTK("KEIW0011", "GRP", "", "登録日" ) = ""
