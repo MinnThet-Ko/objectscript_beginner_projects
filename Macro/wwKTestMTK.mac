@@ -46,12 +46,12 @@ ROUTINE wwKTestMTK
     w !, $EXTRACT(updatedDateString, 1, 4)_"年"_$EXTRACT(updatedDateString, 5, 6)_"月"_$EXTRACT(updatedDateString, 7, 8)_"日"
     w !, $EXTRACT(savedDateString, 1, 4)_"年"_$EXTRACT(savedDateString, 5, 6)_"月"_$EXTRACT(savedDateString, 7, 8)_"日"
 
+
     // Q7. Added a new group name
     s oldID = $PIECE($GET(^MKEN1MTK("INQWMS0030")), $C(22), 1)
     s oldDate = $PIECE($GET(^MKEN1MTK("INQWMS0030")), $C(22), 2)
     s newID = oldID_"/A"
     //s ^MKEN1MTK("INQWMS0030") = $REPLACE($GET(^MKEN1MTK("INQWMS0030")), oldID, newID)
-
     S updatedDate = $ZDATE($HOROLOG)
     S updatedDateString = $PIECE(updatedDate, "/", 3)_$PIECE(updatedDate, "/", 1)_$PIECE(updatedDate, "/", 2)
     s ^MKEN1MTK("INQWMS0030") = $REPLACE($GET(^MKEN1MTK("INQWMS0030")), oldDate, updatedDateString)
@@ -68,7 +68,7 @@ ROUTINE wwKTestMTK
     s queryary = "^MKEN1MTK"
     While 1 { 
         s queryary=$QUERY(@queryary)
-        s dataString = @queryary
+        s dataString = queryary
         set groupIDString = $PIECE(dataString, $C(22), 1)
         set groupIDString = $REPLACE(groupIDString, "/", "")
         for i=1:1:$LENGTH(groupIDString){
@@ -78,4 +78,122 @@ ROUTINE wwKTestMTK
     }
 
 
+    // Q10. Add Q,R,S,T,U,W to Group Permission Master
+    s groupIDList = $LISTBUILD("Q","R","S","T","U","W")
+    for i=1:1:$LISTLENGTH(groupIDList) {
+        S ^MKEN2MTK("KEIW0011","GRP", $LISTGET(groupIDList, i))=$ZDATE($HOROLOG, 8)
+    }
 
+    // Q11. Get employee and group count for every record in permission master
+    s queryary = "^MKEN1MTK"
+    While 1 { 
+        s queryary=$QUERY(@queryary)
+        Quit:queryary=""
+        s permissionID = $EXTRACT(queryary, $FIND(queryary, "(")+1, $FIND(queryary, ")")-3)
+
+        s innerQuery = "^MKEN2MTK"
+        s recordCount = 0
+        while 1 {
+            s innerQuery=$QUERY(@innerQuery)           
+            if (innerQuery[permissionID =1){
+                s recordCount = recordCount+1
+            }
+            q:innerQuery=""
+        }
+
+        w !, "Record count of ", permissionID, ":", recordCount
+    }
+
+    // Q12. Display the name of EIGWINQ042
+    set ln = "" 
+    for {       
+        set ln = $order(^MKEN2MTK("EIGWINQ0420", "SYA",ln))  
+        quit:(ln = "")                         
+        if (ln '= ""){
+            w !, ^MSYA(ln)
+        }
+    }
+
+    // Q13. Show every employee registered before 31/05/2018
+
+    set employeeID = "" 
+    for {       
+        set employeeID = $order(^MKEN2MTK(employeeID))
+        quit:(employeeID = "") 
+        set employeeSYAID = ""
+        for {
+            set employeeSYAID = $order(^MKEN2MTK(employeeID ,"SYA", employeeSYAID))
+            q:(employeeSYAID = "")
+            if ($GET(^MKEN2MTK(employeeID,"SYA",employeeSYAID)) < 20180531 = 1){
+                w !, $GET(^MKEN2MTK(employeeID))
+                w !, $GET(^MKEN2MTK(employeeID ,"SYA", employeeSYAID))
+            }
+            
+            
+        }                       
+        
+    }
+
+    // Q14. Delete every record that starts with "w" in group master record
+    s innerQuery = "^MKEN2MTK"
+
+    while 1 {
+        s innerQuery=$QUERY(@innerQuery)  
+        s ID = $EXTRACT(innerQuery, $FIND(innerQuery, "(")+1, $FIND(innerQuery, ",")-3)
+        kill:$EXTRACT(ID, 1)="w" ^MKEN2MTK(ID)    
+        q:innerQuery=""
+    }
+
+    // Q15. Show everyone older than INQWMS0030. Order the name if the date is equal.
+    // I don't understand the question.
+    set employeeSYAID = ""
+        for {
+            set employeeSYAID = $order(^MKEN2MTK("INQWMS0030" ,"SYA", employeeSYAID))
+            q:(employeeSYAID = "")
+            w:$GET(^MKEN2MTK("INQWMS0030" ,"SYA", employeeSYAID)) !, $GET(^MKEN2MTK("INQWMS0030" ,"SYA", employeeSYAID))       
+    } 
+
+    //Q16. Display every record in Permission Master who only registered in the group master
+    set permissionID = ""
+        for {
+            set permissionID = $order(^MKEN1MTK(permissionID))
+            q:(permissionID = "")
+            if ($Data(^MDIC(permissionID)) = 1 && $Data(^MKEN2MTK(permissionID)) = 0){
+                w !, permissionID
+            }
+    }
+
+    // Q17. Get input for Employee ID, and check the routine ID. 
+    r "Enter employee ID:", employeeID
+    set routineID = "" 
+    set foundFlag = 0
+    for {       
+        set routineID = $order(^MKEN2MTK(routineID))
+        quit:(routineID = "") 
+        set employeeSYAID = ""
+        for {
+            set employeeSYAID = $order(^MKEN2MTK(routineID ,"SYA", employeeSYAID))
+            q:(employeeSYAID = "")
+            if (employeeID=employeeSYAID) {
+                set foundFlag = 1
+                // Loops for displaying everything related to a routine ID
+                w !, $GET(^MKEN2MTK(routineID))
+                set SYAID = ""
+                for {
+                    set SYAID = $order(^MKEN2MTK(routineID ,"SYA", SYAID))
+                    q:(SYAID = "")
+                    w !,  SYAID     
+                } 
+
+                set GRPID = ""
+                w !, "All Group IDs"
+                for {
+                    set GRPID = $order(^MKEN2MTK(routineID ,"GRP", GRPID))
+                    q:(GRPID = "")
+                    w !, GRPID    
+                }                      
+            } 
+        }                       
+        
+    }
+    w:foundFlag=0 !, "権限なし"
